@@ -1,0 +1,31 @@
+# permissions for end users to edit zeusapps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: zeusapp-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: zeusapp
+    app.kubernetes.io/part-of: zeusapp
+    app.kubernetes.io/managed-by: kustomize
+  name: zeusapp-editor-role
+rules:
+- apiGroups:
+  - serverless.nativeai.dev
+  resources:
+  - zeusapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - serverless.nativeai.dev
+  resources:
+  - zeusapps/status
+  verbs:
+  - get

@@ -1,0 +1,8 @@
+apiVersion: serverless.nativeai.dev/v1
+kind: Zeusapp
+metadata:
+  name: video-analysize
+spec:
+  name: video-analysize
+  minReplicas: 1
+  image: 10.252.39.13:5000/walker/digitalocean/flask-helloworld
