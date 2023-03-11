@@ -29,9 +29,11 @@ type ZeusappSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Zeusapp. Edit zeusapp_types.go to remove/update
-	Name        string `json:"name,omitempty"`
-	MinReplicas uint32 `json:"minReplicas"`
-	Image       string `json:"image"`
+	Name          string   `json:"name,omitempty"`
+	MinReplicas   int32    `json:"minReplicas"`
+	Image         string   `json:"image"`
+	Command       []string `json:"command"`
+	ContainerPort int32    `json:"containerPort"`
 }
 
 // ZeusappStatus defines the observed state of Zeusapp

@@ -35,6 +35,13 @@ spec:
           spec:
             description: ZeusappSpec defines the desired state of Zeusapp
             properties:
+              command:
+                items:
+                  type: string
+                type: array
+              containerPort:
+                format: int32
+                type: integer
               image:
                 type: string
               minReplicas:
@@ -45,6 +52,8 @@ spec:
                   to remove/update
                 type: string
             required:
+            - command
+            - containerPort
             - image
             - minReplicas
             type: object

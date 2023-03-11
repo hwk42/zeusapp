@@ -15,15 +15,13 @@ import (
 )
 
 const (
-	containerPort    = 5000
 	zeusappFinalizer = "zeusapp.nativeai.dev"
-	vieImage         = "10.252.39.13:5000/walker/digitalocean/flask-helloworld"
 )
 
 func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappReconciler) (*appsv1.Deployment, error) {
 	//var volumeMounts []corev1.VolumeMount
 	//var volumes []corev1.Volume
-	//var mountpath, subpath string = tb.Spec.LogsPath, ""
+	//var mountpath, subpath string = " ", ""
 	var affinity = &corev1.Affinity{}
 
 	return &appsv1.Deployment{
@@ -32,7 +30,7 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 			Namespace: app.Namespace,
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas: proto.Int32(1),
+			Replicas: proto.Int32(app.Spec.MinReplicas),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"zeusapp": app.Name,
@@ -47,14 +45,14 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 					RestartPolicy: corev1.RestartPolicyAlways,
 					Containers: []corev1.Container{
 						{
-							Name:            "vie",
-							Image:           vieImage,
+							Name:            "zeusapp",
+							Image:           app.Spec.Image,
 							ImagePullPolicy: corev1.PullAlways,
-							//Command:         []string{"/usr/local/bin/tensorboard"},
+							Command:         app.Spec.Command,
 							//WorkingDir: "/",
 							Ports: []corev1.ContainerPort{
 								{
-									ContainerPort: containerPort,
+									ContainerPort: app.Spec.ContainerPort,
 								},
 							},
 
@@ -81,7 +79,7 @@ func generateService(app *nativeaidevv1.Zeusapp) *corev1.Service {
 				corev1.ServicePort{
 					Name:       "http-" + app.Name,
 					Port:       80,
-					TargetPort: intstr.FromInt(containerPort),
+					TargetPort: intstr.FromInt(int(app.Spec.ContainerPort)),
 				},
 			},
 		},
