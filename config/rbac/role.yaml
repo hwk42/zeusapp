@@ -6,7 +6,31 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - nativeai.dev
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - serverless.nativeai.dev
   resources:
   - zeusapps
   verbs:
@@ -18,13 +42,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - nativeai.dev
+  - serverless.nativeai.dev
   resources:
   - zeusapps/finalizers
   verbs:
   - update
 - apiGroups:
-  - nativeai.dev
+  - serverless.nativeai.dev
   resources:
   - zeusapps/status
   verbs:

@@ -48,7 +48,7 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 							Name:            "zeusapp",
 							Image:           app.Spec.Image,
 							ImagePullPolicy: corev1.PullAlways,
-							Command:         app.Spec.Command,
+							//Command:         app.Spec.Command,
 							//WorkingDir: "/",
 							Ports: []corev1.ContainerPort{
 								{
