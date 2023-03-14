@@ -73,7 +73,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: test ## Build docker image with the manager.
-	docker build -t ${IMG} .
+	docker build --build-arg https_proxy=10.1.180.122:20171 -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
