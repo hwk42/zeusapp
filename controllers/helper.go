@@ -41,6 +41,7 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 					Labels: map[string]string{"zeusapp": app.Name},
 				},
 				Spec: corev1.PodSpec{
+					HostNetwork:   true,
 					Affinity:      affinity,
 					RestartPolicy: corev1.RestartPolicyAlways,
 					Containers: []corev1.Container{
