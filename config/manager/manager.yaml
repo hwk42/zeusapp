@@ -70,7 +70,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: controller:latest
+        image: 10.252.39.13:5000/aiscene/zeusapp-controller:v1
         name: manager
         securityContext:
           allowPrivilegeEscalation: false

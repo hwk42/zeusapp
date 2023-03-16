@@ -73,7 +73,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: test ## Build docker image with the manager.
-	docker build --build-arg https_proxy=10.1.180.122:20171 -t ${IMG} .
+	docker build -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
@@ -117,7 +117,7 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 
 update: kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
-	kubectl -nzeusapp-system get deploy zeusapp-controller-manager
+	kubectl -nzeusapp-system delete deploy zeusapp-controller-manager
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 .PHONY: undeploy
