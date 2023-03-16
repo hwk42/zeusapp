@@ -55,7 +55,11 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 									ContainerPort: app.Spec.ContainerPort,
 								},
 							},
-
+							Env: []corev1.EnvVar{{
+								Name:      "VIE_POD_IP",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.podIP"}},
+							},
+							},
 							//VolumeMounts: volumeMounts,
 						},
 					},
