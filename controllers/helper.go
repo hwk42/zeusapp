@@ -42,6 +42,7 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 				},
 				Spec: corev1.PodSpec{
 					HostNetwork:   true,
+					DNSPolicy:     corev1.DNSClusterFirstWithHostNet,
 					Affinity:      affinity,
 					RestartPolicy: corev1.RestartPolicyAlways,
 					Containers: []corev1.Container{
