@@ -41,8 +41,8 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 					Labels: map[string]string{"zeusapp": app.Name},
 				},
 				Spec: corev1.PodSpec{
-					HostNetwork:   true,
-					DNSPolicy:     corev1.DNSClusterFirstWithHostNet,
+					//HostNetwork:   true,
+					//DNSPolicy:     corev1.DNSClusterFirstWithHostNet,
 					Affinity:      affinity,
 					RestartPolicy: corev1.RestartPolicyAlways,
 					Containers: []corev1.Container{
@@ -57,10 +57,20 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 									ContainerPort: app.Spec.ContainerPort,
 								},
 							},
-							Env: []corev1.EnvVar{{
-								Name:      "VIE_POD_IP",
-								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.podIP"}},
-							},
+							Env: []corev1.EnvVar{
+								{
+									Name:      "VIE_POD_IP",
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.podIP"}},
+								},
+								{
+									Name:      "NODE_IP",
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.hostIP"}},
+								},
+
+								{
+									Name:  "HTTP_WEB_PORT",
+									Value: string(app.Spec.ContainerPort),
+								},
 							},
 							//VolumeMounts: volumeMounts,
 						},
