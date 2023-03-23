@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -70,6 +71,11 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 								{
 									Name:  "HTTP_WEB_PORT",
 									Value: string(app.Spec.ContainerPort),
+								},
+							},
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									"nvidia.com/gpu": resource.MustParse("1"),
 								},
 							},
 							//VolumeMounts: volumeMounts,
