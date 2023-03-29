@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strconv"
 
 	"github.com/go-logr/logr"
 	nativeaidevv1 "github.com/hwk42/zeusapp/api/v1"
@@ -16,7 +17,9 @@ import (
 )
 
 const (
-	zeusappFinalizer = "zeusapp.nativeai.dev"
+	zeusappFinalizer  = "zeusapp.nativeai.dev"
+	Ascend310Resource = "huawei.com/Ascend310"
+	NvidiaResource    = "nvidia.com/gpu"
 )
 
 func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappReconciler) (*appsv1.Deployment, error) {
@@ -70,18 +73,189 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 
 								{
 									Name:  "HTTP_WEB_PORT",
-									Value: string(app.Spec.ContainerPort),
+									Value: strconv.FormatInt(int64(app.Spec.ContainerPort), 10),
 								},
 							},
 							Resources: corev1.ResourceRequirements{
 								Limits: corev1.ResourceList{
-									"nvidia.com/gpu": resource.MustParse("1"),
+									NvidiaResource: resource.MustParse("1"),
 								},
 							},
 							//VolumeMounts: volumeMounts,
 						},
 					},
 					//Volumes: volumes,
+				},
+			},
+		},
+	}, nil
+}
+
+func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappReconciler) (*appsv1.Deployment, error) {
+	var volumeMounts []corev1.VolumeMount
+	var volumes []corev1.Volume
+	//var mountpath, subpath string = " ", ""
+	var affinity = &corev1.Affinity{}
+
+	volumeMounts = append(volumeMounts,
+		corev1.VolumeMount{
+			Name:      "slog",
+			MountPath: "/var/log/npu/conf/slog/"},
+
+		corev1.VolumeMount{
+			Name:      "localtime",
+			MountPath: "/etc/localtime"},
+		corev1.VolumeMount{
+			Name:      "npu",
+			MountPath: "/usr/local/bin/npu-smi"},
+		corev1.VolumeMount{
+			Name:      "dcmi",
+			MountPath: "/usr/local/dcmi"},
+		corev1.VolumeMount{
+			Name:      "lib64",
+			MountPath: "/lib64"},
+		corev1.VolumeMount{
+			Name:      "driver",
+			MountPath: "/usr/local/Ascend/driver/lib64/ "},
+		corev1.VolumeMount{
+			Name:      "tools",
+			MountPath: "/usr/local/Ascend/driver/tools/"},
+		corev1.VolumeMount{
+			Name:      "modules",
+			MountPath: "/lib/modules"},
+	)
+	volumes = append(volumes,
+		corev1.Volume{
+			Name: "slog",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/var/log/npu/conf/slog/",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "localtime",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/etc/localtime",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "npu",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/usr/local/bin/npu-smi",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "dcmi",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/usr/local/dcmi",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "lib64",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/lib64",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "driver",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/usr/local/Ascend/driver/lib64/",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "tools",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/usr/local/Ascend/driver/tools/",
+				},
+			},
+		},
+		corev1.Volume{
+			Name: "modules",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/lib/modules",
+				},
+			},
+		},
+	)
+
+	return &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      app.Name,
+			Namespace: app.Namespace,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: proto.Int32(app.Spec.MinReplicas),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"zeusapp": app.Name,
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{"zeusapp": app.Name},
+				},
+				Spec: corev1.PodSpec{
+					//HostNetwork:   true,
+					//DNSPolicy:     corev1.DNSClusterFirstWithHostNet,
+					Affinity:      affinity,
+					RestartPolicy: corev1.RestartPolicyAlways,
+					Containers: []corev1.Container{
+						{
+							Name:            "zeusapp",
+							Image:           app.Spec.Image,
+							ImagePullPolicy: corev1.PullAlways,
+							//Command:         app.Spec.Command,
+							//WorkingDir: "/",
+							Ports: []corev1.ContainerPort{
+								{
+									ContainerPort: app.Spec.ContainerPort,
+								},
+							},
+							Env: []corev1.EnvVar{
+								{
+									Name:      "VIE_POD_IP",
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.podIP"}},
+								},
+								{
+									Name:      "NODE_IP",
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.hostIP"}},
+								},
+
+								{
+									Name:  "LD_LIBRARY_PATH",
+									Value: "/usr/local/Ascend/driver/lib64:/usr/local/Ascend/add-ons:$LD_LIBRARY_PATH",
+								},
+
+								{
+									Name:  "HTTP_WEB_PORT",
+									Value: strconv.FormatInt(int64(app.Spec.ContainerPort), 10),
+								},
+							},
+							Resources: corev1.ResourceRequirements{
+								Requests: corev1.ResourceList{
+									Ascend310Resource: resource.MustParse("1"),
+								},
+								Limits: corev1.ResourceList{
+									Ascend310Resource: resource.MustParse("1"),
+								},
+							},
+							VolumeMounts: volumeMounts,
+						},
+					},
+					Volumes: volumes,
 				},
 			},
 		},
