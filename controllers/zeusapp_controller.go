@@ -72,7 +72,7 @@ func (r *ZeusappReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	// Reconcile k8s deployment.
-	deployment, err := generateDeployment(instance, logger, r)
+	deployment, err := generateDeploymentForAscend(instance, logger, r)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
