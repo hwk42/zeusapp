@@ -104,7 +104,7 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 			Name:      "dcmi",
 			MountPath: "/usr/local/dcmi"},
 		corev1.VolumeMount{
-			Name:      "tools",
+			Name:      "Ascend",
 			MountPath: "/usr/local/Ascend"},
 	)
 	volumes = append(volumes,
@@ -125,7 +125,7 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 			},
 		},
 		corev1.Volume{
-			Name: "driver",
+			Name: "Ascend",
 			VolumeSource: corev1.VolumeSource{
 				HostPath: &corev1.HostPathVolumeSource{
 					Path: "/usr/local/Ascend",
@@ -176,12 +176,6 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 									Name:      "NODE_IP",
 									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.hostIP"}},
 								},
-
-								{
-									Name:  "LD_LIBRARY_PATH",
-									Value: "/usr/local/Ascend/driver/lib64:/usr/local/Ascend/add-ons:$LD_LIBRARY_PATH",
-								},
-
 								{
 									Name:  "HTTP_WEB_PORT",
 									Value: strconv.FormatInt(int64(app.Spec.ContainerPort), 10),
