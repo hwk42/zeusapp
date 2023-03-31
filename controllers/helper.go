@@ -94,17 +94,9 @@ func generateDeployment(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappR
 func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r *ZeusappReconciler) (*appsv1.Deployment, error) {
 	var volumeMounts []corev1.VolumeMount
 	var volumes []corev1.Volume
-	//var mountpath, subpath string = " ", ""
 	var affinity = &corev1.Affinity{}
 
 	volumeMounts = append(volumeMounts,
-		corev1.VolumeMount{
-			Name:      "slog",
-			MountPath: "/var/log/npu/conf/slog/"},
-
-		corev1.VolumeMount{
-			Name:      "localtime",
-			MountPath: "/etc/localtime"},
 		corev1.VolumeMount{
 			Name:      "npu",
 			MountPath: "/usr/local/bin/npu-smi"},
@@ -112,35 +104,10 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 			Name:      "dcmi",
 			MountPath: "/usr/local/dcmi"},
 		corev1.VolumeMount{
-			Name:      "lib64",
-			MountPath: "/lib64"},
-		corev1.VolumeMount{
-			Name:      "driver",
-			MountPath: "/usr/local/Ascend/driver/lib64/ "},
-		corev1.VolumeMount{
 			Name:      "tools",
-			MountPath: "/usr/local/Ascend/driver/tools/"},
-		corev1.VolumeMount{
-			Name:      "modules",
-			MountPath: "/lib/modules"},
+			MountPath: "/usr/local/Ascend"},
 	)
 	volumes = append(volumes,
-		corev1.Volume{
-			Name: "slog",
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/var/log/npu/conf/slog/",
-				},
-			},
-		},
-		corev1.Volume{
-			Name: "localtime",
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/etc/localtime",
-				},
-			},
-		},
 		corev1.Volume{
 			Name: "npu",
 			VolumeSource: corev1.VolumeSource{
@@ -158,34 +125,10 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 			},
 		},
 		corev1.Volume{
-			Name: "lib64",
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/lib64",
-				},
-			},
-		},
-		corev1.Volume{
 			Name: "driver",
 			VolumeSource: corev1.VolumeSource{
 				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/usr/local/Ascend/driver/lib64/",
-				},
-			},
-		},
-		corev1.Volume{
-			Name: "tools",
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/usr/local/Ascend/driver/tools/",
-				},
-			},
-		},
-		corev1.Volume{
-			Name: "modules",
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/lib/modules",
+					Path: "/usr/local/Ascend",
 				},
 			},
 		},
