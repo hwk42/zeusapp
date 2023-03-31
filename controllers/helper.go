@@ -104,8 +104,8 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 			Name:      "dcmi",
 			MountPath: "/usr/local/dcmi"},
 		corev1.VolumeMount{
-			Name:      "Ascend",
-			MountPath: "/usr/local/ascend"},
+			Name:      "ascend",
+			MountPath: "/usr/local/Ascend"},
 	)
 	volumes = append(volumes,
 		corev1.Volume{
@@ -125,10 +125,10 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 			},
 		},
 		corev1.Volume{
-			Name: "Ascend",
+			Name: "ascend",
 			VolumeSource: corev1.VolumeSource{
 				HostPath: &corev1.HostPathVolumeSource{
-					Path: "/usr/local/ascend",
+					Path: "/usr/local/Ascend",
 				},
 			},
 		},
