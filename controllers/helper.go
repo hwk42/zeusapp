@@ -180,6 +180,10 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 									Name:  "HTTP_WEB_PORT",
 									Value: strconv.FormatInt(int64(app.Spec.ContainerPort), 10),
 								},
+								{
+									Name:  "ASCEND_VISIBLE_DEVICES",
+									Value: strconv.FormatInt(int64(app.Spec.ContainerPort), 10),
+								},
 							},
 							Resources: corev1.ResourceRequirements{
 								Requests: corev1.ResourceList{
