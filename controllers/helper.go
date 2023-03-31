@@ -151,8 +151,8 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 					Labels: map[string]string{"zeusapp": app.Name},
 				},
 				Spec: corev1.PodSpec{
-					//HostNetwork:   true,
-					//DNSPolicy:     corev1.DNSClusterFirstWithHostNet,
+					HostNetwork:   true,
+					DNSPolicy:     corev1.DNSClusterFirstWithHostNet,
 					Affinity:      affinity,
 					RestartPolicy: corev1.RestartPolicyAlways,
 					Containers: []corev1.Container{
