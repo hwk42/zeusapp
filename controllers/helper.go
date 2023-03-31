@@ -182,7 +182,7 @@ func generateDeploymentForAscend(app *nativeaidevv1.Zeusapp, log logr.Logger, r 
 								},
 								{
 									Name:  "ASCEND_VISIBLE_DEVICES",
-									Value: strconv.FormatInt(int64(app.Spec.ContainerPort), 10),
+									Value: "0",
 								},
 							},
 							Resources: corev1.ResourceRequirements{
